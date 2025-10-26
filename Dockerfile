@@ -1,12 +1,16 @@
-FROM openjdk:17-bullseye
+FROM eclipse-temurin:21-jdk-jammy
 
-LABEL maintainer="haxqer <haxqer666@gmail.com>" version="9.2.1"
+LABEL maintainer="haxqer <haxqer666@gmail.com>" version="10.0.2"
 
 ARG ATLASSIAN_PRODUCTION=confluence
 ARG APP_NAME=confluence
-ARG APP_VERSION=9.2.1
+ARG APP_VERSION=10.0.2
 ARG AGENT_VERSION=1.3.3
 ARG MYSQL_DRIVER_VERSION=8.0.22
+
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 ENV CONFLUENCE_HOME=/var/confluence \
     CONFLUENCE_INSTALL=/opt/confluence \
@@ -18,6 +22,8 @@ ENV CONFLUENCE_HOME=/var/confluence \
     LIB_PATH=/confluence/WEB-INF/lib
 
 ENV JAVA_OPTS="-javaagent:${AGENT_PATH}/${AGENT_FILENAME} ${JAVA_OPTS}"
+
+RUN apt update && apt install -y curl
 
 RUN mkdir -p ${CONFLUENCE_INSTALL} ${CONFLUENCE_HOME} ${AGENT_PATH} ${CONFLUENCE_INSTALL}${LIB_PATH} \
 && curl -o ${AGENT_PATH}/${AGENT_FILENAME}  https://github.com/haxqer/confluence/releases/download/v${AGENT_VERSION}/atlassian-agent.jar -L \
